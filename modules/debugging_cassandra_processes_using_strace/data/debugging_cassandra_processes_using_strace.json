@@ -1,0 +1,78 @@
+{
+  "name": "debugging_cassandra_processes_using_strace",
+  "description": "This incident type refers to the process of using the strace command to identify and debug issues with Cassandra processes. Strace is a debugging tool that can be used to monitor system calls made by a process, which can help diagnose problems such as application crashes, performance issues, and other errors that may occur during the Cassandra process. This process is commonly used by software engineers and developers to troubleshoot issues with Cassandra and is an important step in resolving incidents related to this database management system.",
+  "params": [
+    {
+      "name": "ERROR",
+      "value": ""
+    },
+    {
+      "name": "CASSANDRA",
+      "value": ""
+    },
+    {
+      "name": "PATH_TO_STRACE_LOG_FILE",
+      "value": ""
+    },
+    {
+      "name": "OUTPUT_FILE",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Debugging Cassandra Processes Using strace\nThis incident type refers to the process of using the strace command to identify and debug issues with Cassandra processes. Strace is a debugging tool that can be used to monitor system calls made by a process, which can help diagnose problems such as application crashes, performance issues, and other errors that may occur during the Cassandra process. This process is commonly used by software engineers and developers to troubleshoot issues with Cassandra and is an important step in resolving incidents related to this database management system."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Step 1: Identify the PID of the Cassandra process"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `pid=$(pgrep -f ${CASSANDRA})`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Step 2: Start strace on the process"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `strace -p $pid -o ${OUTPUT_FILE}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Step 3: Analyze the strace output for issues"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep -i ${ERROR} ${OUTPUT_FILE}`"
+    }
+  ]
+}
